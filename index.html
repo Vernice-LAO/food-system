@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人旅行攻略系統</title>
+    <style>
+        :root {
+            --primary-color: #0984e3;
+            --primary-hover: #74b9ff;
+            --success-color: #2ed573;
+            --accent-color: #e84393;
+            --bg-color: #f1f2f6;
+            --card-bg: #ffffff;
+            --text-color: #2f3542;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #747d8c;
+            font-size: 1.1rem;
+        }
+
+        /* 表單區塊樣式 */
+        .form-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 600px) {
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0773c5;
+        }
+
+        /* 篩選器區塊樣式 */
+        .filter-section {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #57606f;
+        }
+
+        .filter-select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            font-size: 0.9rem;
+        }
+
+        /* 卡片看板樣式 */
+        .record-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .record-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--primary-color);
+            position: relative;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+
+        .record-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .record-card.status-done {
+            border-left-color: #a4b0be;
+            opacity: 0.9;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: #747d8c;
+            border-bottom: 1px dashed #f1f2f6;
+            padding-bottom: 8px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .badge-foreign { background-color: #6c5ce7; }
+        .badge-domestic { background-color: #00b894; }
+        .badge-short { background-color: #fdcb6e; color: #2f3542; }
+        .badge-other { background-color: #747d8c; }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 6px;
+            font-weight: bold;
+        }
+        .status-active { background-color: #e3faf2; color: var(--success-color); }
+        .status-done { background-color: #f1f2f6; color: #57606f; }
+
+        .card-destination-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-destination {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .card-days {
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #ffeaa7;
+            color: #d63031;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 費用顯示區塊 */
+        .card-costs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            .card-costs {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        .cost-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cost-label {
+            color: #747d8c;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        .cost-value {
+            font-weight: bold;
+            color: #2f3542;
+            font-size: 1.1rem;
+        }
+
+        .cost-item.total-cost {
+            border-left: 1px solid #ddd;
+            padding-left: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .cost-item.total-cost {
+                border-left: none;
+                padding-left: 0;
+                border-top: 1px dashed #ddd;
+                padding-top: 8px;
+            }
+        }
+
+        /* AI 互動區域樣式 */
+        .ai-guide-container {
+            background-color: #f6f8fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 18px;
+            border: 1px dashed #74b9ff;
+        }
+
+        .ai-guide-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 8px;
+        }
+
+        /* 候選景點選擇器網格 */
+        .spots-selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 650px) {
+            .spots-selector-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .spot-option {
+            background-color: #ffffff;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            user-select: none;
+        }
+
+        .spot-option:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .spot-option.selected {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+        }
+
+        .spot-checkbox {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--success-color);
+            cursor: pointer;
+        }
+
+        .spot-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .spot-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #2f3542;
+        }
+
+        .spot-reason {
+            font-size: 0.8rem;
+            color: #747d8c;
+            line-height: 1.4;
+        }
+
+        .spot-meta-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .spot-tag {
+            font-size: 0.75rem;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background-color: #f1f2f6;
+            color: #57606f;
+        }
+
+        /* 精選行程表 */
+        .itinerary-table-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e1e4e8;
+            margin-top: 15px;
+        }
+
+        .table-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .itinerary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .itinerary-table th {
+            background-color: #f1f2f6;
+            color: #57606f;
+            padding: 10px;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .itinerary-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e1e4e8;
+            vertical-align: middle;
+        }
+
+        .itinerary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 旋轉動畫（載入中效果） */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(9, 132, 227, 0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 6px 14px;
+            border: 1px solid #ced4da;
+            background-color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #f1f2f6;
+        }
+
+        .btn-like {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .btn-like:hover {
+            background-color: #fff0f6;
+        }
+
+        .btn-toggle-status {
+            color: #2f3542;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #a4b0be;
+            padding: 50px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>✈️ 個人旅行攻略系統</h1>
+            <p>點選喜愛的 AI 推薦景點，即時為您排版專屬行程表格！</p>
+        </header>
+
+        <!-- 行程攻略輸入表單 -->
+        <section class="form-section">
+            <h2 class="form-title">📝 新增目的地攻略 (AI 自動生成景點)</h2>
+            <form id="itineraryForm">
+                <div class="form-grid">
+                    <!-- 目的地 (content) -->
+                    <div class="form-group">
+                        <label for="content">目的地名稱 <span style="color: red;">*</span></label>
+                        <input type="text" id="content" class="form-control" placeholder="例如：日本東京、台灣墾丁、泰國曼谷" required>
+                    </div>
+
+                    <!-- 分類 (category) -->
+                    <div class="form-group">
+                        <label for="category">旅遊分類</label>
+                        <select id="category" class="form-control">
+                            <option value="國外旅遊">國外旅遊</option>
+                            <option value="國內旅遊">國內旅遊</option>
+                            <option value="短途周邊">短途周邊</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 機票費用 (flightCost) -->
+                    <div class="form-group">
+                        <label for="flightCost">機票預估費用 (MOP) <span style="color: red;">*</span></label>
+                        <input type="number" id="flightCost" class="form-control" min="0" placeholder="請輸入金額" required>
+                    </div>
+
+                    <!-- 酒店費用 (hotelCost) -->
+                    <div class="form-group">
+                        <label for="hotelCost">酒店預估費用 (MOP) <span style="color: red;">*</span></label>
+                        <input type="number" id="hotelCost" class="form-control" min="0" placeholder="請輸入金額" required>
+                    </div>
+
+                    <!-- 遊玩天數 (travelDays) -->
+                    <div class="form-group full-width">
+                        <label for="travelDays">預計遊玩天數 (天) <span style="color: red;">*</span></label>
+                        <input type="number" id="travelDays" class="form-control" min="1" step="1" placeholder="例如：5" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn">新增目的地並生成 AI 候選景點</button>
+            </form>
+        </section>
+
+        <!-- 篩選控制列 -->
+        <section class="filter-section">
+            <div class="filter-group">
+                <label for="statusFilter">狀態篩選：</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="全部">全部</option>
+                    <option value="active">計畫中</option>
+                    <option value="done">已完成</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="categoryFilter">分類篩選：</label>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="全部">全部</option>
+                    <option value="國外旅遊">國外旅遊</option>
+                    <option value="國內旅遊">國內旅遊</option>
+                    <option value="短途周邊">短途周邊</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- 行程即時顯示看板 -->
+        <main class="record-list" id="recordContainer">
+            <!-- 目的地卡片將由 JavaScript 動態渲染 -->
+        </main>
+    </div>
+
+    <script>
+        // 常量定義 (要求固定為 records)
+        const STORAGE_KEY = 'records';
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        // 初始化應用程式
+        function initApp() {
+            // 綁定表單提交
+            document.getElementById('itineraryForm').addEventListener('submit', handleFormSubmit);
+            
+            // 綁定篩選器變更
+            document.getElementById('statusFilter').addEventListener('change', filterAndRender);
+            document.getElementById('categoryFilter').addEventListener('change', filterAndRender);
+
+            // 首次載入渲染
+            filterAndRender();
+        }
+
+        // 處理表單提交
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const contentInput = document.getElementById('content');
+            const categoryInput = document.getElementById('category');
+            const flightCostInput = document.getElementById('flightCost');
+            const hotelCostInput = document.getElementById('hotelCost');
+            const travelDaysInput = document.getElementById('travelDays');
+
+            const formData = {
+                content: contentInput.value.trim(),
+                category: categoryInput.value,
+                flightCost: parseFloat(flightCostInput.value) || 0,
+                hotelCost: parseFloat(hotelCostInput.value) || 0,
+                travelDays: parseInt(travelDaysInput.value) || 1
+            };
+
+            // 建立並儲存新紀錄
+            createRecord(formData);
+
+            // 重設表單欄位
+            contentInput.value = '';
+            categoryInput.value = '國外旅遊';
+            flightCostInput.value = '';
+            hotelCostInput.value = '';
+            travelDaysInput.value = '';
+
+            // 重新篩選並渲染
+            filterAndRender();
+        }
+
+        // 核心要求 Function 1: 建立新 Record 並存檔
+        function createRecord(formData) {
+            const allRecords = loadData();
+            
+            // 格式化目前時間 (YYYY/MM/DD HH:MM:SS)
+            const now = new Date();
+            const createdAtStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+            const newRecord = {
+                id: 'tr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                createdAt: createdAtStr,
+                status: 'active', // 預設 active (計畫中)
+                content: formData.content, // 目的地名稱
+                category: formData.category, // 分類
+                flightCost: formData.flightCost,
+                hotelCost: formData.hotelCost,
+                travelDays: formData.travelDays, // 遊玩天數
+                likes: 0, // 想去指數
+                aiGuide: 'pending', // 初始狀態為等待生成 (JSON 字串或錯誤狀態)
+                selectedSpots: [] // 被使用者勾選喜愛的景點名稱陣列
+            };
+
+            // 新增至最上方
+            allRecords.unshift(newRecord);
+            saveData(allRecords);
+
+            // 觸發背景非同步 AI 生成
+            triggerAIGeneration(newRecord.id, newRecord.content, newRecord.category, newRecord.travelDays);
+        }
+
+        // 核心要求 Function 2: 將完整 records 陣列存入 localStorage
+        function saveData(record) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+        }
+
+        // 核心要求 Function 3: 從 localStorage 讀取資料
+        function loadData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // 核心要求 Function 4: 更新指定 id 的紀錄屬性
+        function updateRecord(id, changes) {
+            const allRecords = loadData();
+            const index = allRecords.findIndex(item => item.id === id);
+            
+            if (index !== -1) {
+                // 合併屬性變更
+                allRecords[index] = { ...allRecords[index], ...changes };
+                saveData(allRecords);
+                
+                // 更新後重新篩選與渲染
+                filterAndRender();
+            }
+        }
+
+        // 輔助函數：篩選並渲染
+        function filterAndRender() {
+            const allRecords = loadData();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            const filtered = allRecords.filter(record => {
+                const matchStatus = (statusFilter === '全部') || (record.status === statusFilter);
+                const matchCategory = (categoryFilter === '全部') || (record.category === categoryFilter);
+                return matchStatus && matchCategory;
+            });
+
+            renderList(filtered);
+        }
+
+        // 核心要求 Function 5: 渲染傳入的資料列表到畫面上
+        function renderList(recordsToShow) {
+            const container = document.getElementById('recordContainer');
+            container.innerHTML = ''; // 清空看板
+
+            if (recordsToShow.length === 0) {
+                container.innerHTML = '<div class="no-data">目前沒有符合條件的目的地攻略，快去建立一個吧！</div>';
+                return;
+            }
+
+            recordsToShow.forEach(record => {
+                // 建立外層卡片
+                const card = document.createElement('div');
+                card.className = `record-card ${record.status === 'done' ? 'status-done' : ''}`;
+
+                // 設定分類徽章樣式
+                let categoryClass = 'badge-other';
+                if (record.category === '國外旅遊') categoryClass = 'badge-foreign';
+                if (record.category === '國內旅遊') categoryClass = 'badge-domestic';
+                if (record.category === '短途周邊') categoryClass = 'badge-short';
+
+                // 設定狀態相關變數
+                const statusTxt = record.status === 'active' ? '計畫中' : '已完成';
+                const statusBadgeClass = record.status === 'active' ? 'status-active' : 'status-done';
+                const toggleBtnTxt = record.status === 'active' ? '✅ 標記已完成' : '🔄 恢復計畫中';
+                const nextStatus = record.status === 'active' ? 'done' : 'active';
+
+                // 格式化預算金額
+                const formattedFlight = Number(record.flightCost).toLocaleString();
+                const formattedHotel = Number(record.hotelCost).toLocaleString();
+                
+                const totalCostValue = Number(record.flightCost) + Number(record.hotelCost);
+                const totalCost = totalCostValue.toLocaleString();
+
+                // 計算日均花費
+                const days = Number(record.travelDays) || 1;
+                const dailyAverage = Math.round(totalCostValue / days).toLocaleString();
+
+                // 處理 AI 攻略與景點選擇器的渲染
+                let aiGuideHtml = '';
+                if (record.aiGuide === 'pending' || record.aiGuide === 'loading') {
+                    aiGuideHtml = `
+                        <div class="ai-guide-container">
+                            <div class="ai-guide-title">
+                                <div class="spinner"></div>
+                                <span>🤖 AI 正在為您搜集必去景點候選名單...</span>
+                            </div>
+                            <div class="ai-content" style="color: #a4b0be; font-style: italic;">
+                                正在分析當地最熱門的 5 大推薦景點與消費估算，請稍候 5-10 秒...
+                            </div>
+                        </div>
+                    `;
+                } else if (record.aiGuide === 'error') {
+                    aiGuideHtml = `
+                        <div class="ai-guide-container" style="border-color: #ff7675;">
+                            <div class="ai-guide-title" style="color: #ff7675;">
+                                <span>❌ AI 景點載入失敗</span>
+                            </div>
+                            <div class="ai-content">
+                                伺服器忙碌中，請點選下方「🔄 重新生成」按鈕重新獲取數據。
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // 解析 AI 吐出的 JSON 格式
+                    let spots = [];
+                    try {
+                        spots = JSON.parse(record.aiGuide);
+                    } catch (e) {
+                        // 若解析 JSON 失敗，嘗試擷取 Markdown Code block 中的 JSON 字串
+                        const jsonMatch = record.aiGuide.match(/```json([\s\S]*?)```/);
+                        if (jsonMatch && jsonMatch[1]) {
+                            try {
+                                spots = JSON.parse(jsonMatch[1].trim());
+                            } catch (e2) {
+                                spots = [];
+                            }
+                        }
+                    }
+
+                    if (spots && spots.length > 0) {
+                        // 建立候選景點卡片選擇器的 HTML
+                        let selectorCardsHtml = '';
+                        let tableRowsHtml = '';
+
+                        // 確保 selectedSpots 存在
+                        const selectedList = record.selectedSpots || [];
+
+                        spots.forEach((spot, idx) => {
+                            const isSelected = selectedList.includes(spot.name);
+                            const selectedClass = isSelected ? 'selected' : '';
+                            const checkedAttr = isSelected ? 'checked' : '';
+
+                            // 1. 產生候選卡片 HTML
+                            selectorCardsHtml += `
+                                <div class="spot-option ${selectedClass}" onclick="toggleSpotSelection('${record.id}', '${escapeQuote(spot.name)}')">
+                                    <input type="checkbox" class="spot-checkbox" ${checkedAttr} onclick="event.stopPropagation(); toggleSpotSelection('${record.id}', '${escapeQuote(spot.name)}')">
+                                    <div class="spot-details">
+                                        <div class="spot-name">${escapeHtml(spot.name)}</div>
+                                        <div class="spot-reason">${escapeHtml(spot.reason)}</div>
+                                        <div class="spot-meta-tags">
+                                            <span class="spot-tag">⏱️ 建議遊玩: ${escapeHtml(spot.suggestedTime || '1.5-2小時')}</span>
+                                            <span class="spot-tag">💵 估算: ${escapeHtml(spot.cost || '免費')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            // 2. 如果已被選中，則產生精選行程表的 Table Row HTML
+                            if (isSelected) {
+                                tableRowsHtml += `
+                                    <tr>
+                                        <td style="font-weight: bold; color: var(--primary-color);">📍 ${escapeHtml(spot.name)}</td>
+                                        <td>${escapeHtml(spot.reason)}</td>
+                                        <td><span class="spot-tag" style="background:#e8f4fd; color:var(--primary-color);">${escapeHtml(spot.suggestedTime || '2小時')}</span></td>
+                                        <td style="font-weight: 500; color: #2ed573;">${escapeHtml(spot.cost || '免費')}</td>
+                                    </tr>
+                                `;
+                            }
+                        });
+
+                        // 3. 組合精選行程表格
+                        let tableSectionHtml = '';
+                        if (tableRowsHtml !== '') {
+                            tableSectionHtml = `
+                                <div class="itinerary-table-section">
+                                    <div class="table-title">📋 我的精選行程表 (${selectedList.length} 個已選景點)</div>
+                                    <div class="table-responsive">
+                                        <table class="itinerary-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 25%">景點名稱</th>
+                                                    <th style="width: 45%">精選原因 / 攻略小抄</th>
+                                                    <th style="width: 15%">建議停留</th>
+                                                    <th style="width: 15%">預估花費</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${tableRowsHtml}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            tableSectionHtml = `
+                                <div class="itinerary-table-section" style="border-style: dashed; background-color: #fafbfc; text-align: center; padding: 25px;">
+                                    <div style="font-size: 1.5rem; margin-bottom: 5px;">💡</div>
+                                    <div style="color: #747d8c; font-size: 0.9rem; font-weight: bold;">
+                                        請點擊上方候選景點，即可在此即時排版您的專屬行程表！
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        aiGuideHtml = `
+                            <div class="ai-guide-container">
+                                <div class="ai-guide-title">
+                                    <span>🤖 AI 推薦候選景點 (點擊加入行程)：</span>
+                                </div>
+                                <div class="spots-selector-grid">
+                                    ${selectorCardsHtml}
+                                </div>
+                                ${tableSectionHtml}
+                            </div>
+                        `;
+                    } else {
+                        // JSON 解析異常或內容為空的 fallback 靜態呈現
+                        aiGuideHtml = `
+                            <div class="ai-guide-container">
+                                <div class="ai-guide-title">
+                                    <span>🤖 攻略資料：</span>
+                                </div>
+                                <div class="ai-content">
+                                    資料剖析異常，請按重新生成按鈕。
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 產生卡片內容 (透過 escapeHtml 避免 XSS)
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <span class="badge ${categoryClass}">${record.category}</span>
+                            <span class="status-badge ${statusBadgeClass}">${statusTxt}</span>
+                        </div>
+                        <div>新增時間：${record.createdAt}</div>
+                    </div>
+                    
+                    <div class="card-destination-row">
+                        <div class="card-destination">📍 ${escapeHtml(record.content)}</div>
+                        <div class="card-days">📅 遊玩 ${days} 天</div>
+                    </div>
+                    
+                    <div class="card-costs">
+                        <div class="cost-item">
+                            <span class="cost-label">✈️ 機票:</span>
+                            <span class="cost-value">MOP ${formattedFlight}</span>
+                        </div>
+                        <div class="cost-item">
+                            <span class="cost-label">🏨 酒店:</span>
+                            <span class="cost-value">MOP ${formattedHotel}</span>
+                        </div>
+                        <div class="cost-item total-cost">
+                            <span class="cost-label">💰 預算總計 (日均):</span>
+                            <span class="cost-value" style="color: var(--primary-color);">MOP ${totalCost} <span style="font-size: 0.8rem; color:#747d8c; font-weight: normal;">(${dailyAverage}/天)</span></span>
+                        </div>
+                    </div>
+
+                    <!-- AI 互動與表格區域 -->
+                    ${aiGuideHtml}
+
+                    <div class="card-actions">
+                        <button class="btn-action btn-like" onclick="handleLikeClick('${record.id}', ${record.likes})">
+                            ❤️ 想去指數 (${record.likes})
+                        </button>
+                        <button class="btn-action btn-toggle-status" onclick="handleStatusToggle('${record.id}', '${nextStatus}')">
+                            ${toggleBtnTxt}
+                        </button>
+                        <button class="btn-action" onclick="handleRegenerate('${record.id}', '${escapeHtml(record.content)}', '${record.category}', ${record.travelDays})">
+                            🔄 重新生成 AI 景點
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // 當使用者點選或取消勾選推薦景點時，更新狀態
+        function toggleSpotSelection(recordId, spotName) {
+            const allRecords = loadData();
+            const record = allRecords.find(item => item.id === recordId);
+            
+            if (record) {
+                if (!record.selectedSpots) {
+                    record.selectedSpots = [];
+                }
+
+                const index = record.selectedSpots.indexOf(spotName);
+                if (index === -1) {
+                    // 新增勾選
+                    record.selectedSpots.push(spotName);
+                } else {
+                    // 取消勾選
+                    record.selectedSpots.splice(index, 1);
+                }
+
+                // 更新 records 陣列並重新保存及渲染
+                updateRecord(recordId, { selectedSpots: record.selectedSpots });
+            }
+        }
+
+        // 背景調用 Gemini 2.5 進行結構化 JSON 生成，支援 5 次指數型退避重試
+        async function triggerAIGeneration(id, content, category, travelDays) {
+            updateRecord(id, { aiGuide: 'loading', selectedSpots: [] });
+
+            const apiKey = ""; // 執行環境會於執行期自動注入此 Key
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const prompt = `請為我規劃前往「${content}」的精選熱門必去景點。
+分類為「${category}」，預計去「${travelDays}」天。
+請【只返回】一個 JSON 格式的陣列（包在 \`\`\`json ... \`\`\` 區塊中），包含 5 個精心挑選的代表性景點，不要包含額外的說明文字。
+陣列中的每個景點物件必須嚴格包含以下欄位（不要多也不要少，皆為字串型態）：
+- "name": 景點名稱 (例如：淺草寺)
+- "reason": 推薦理由及一針見血的攻略精華 (例如：東京最古老寺廟，雷門燈籠必拍，仲見世通有好吃人形燒)
+- "suggestedTime": 建議停留遊玩時間描述 (例如：1.5小時 或 2小時)
+- "cost": 預估門票或平均消費描述 (例如：免費 或是 MOP 150)
+
+注意：請全部使用繁體中文（台灣或澳門習慣用語），內容要非常簡潔生動。`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "You are a professional travel planner API that always responds with valid JSON matching the exact schema requested inside a JSON markdown code block." }] }
+            };
+
+            let delay = 1000;
+            let success = false;
+            let resultText = "";
+
+            // 指數型退避重試機制 (最高 5 次)
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error Status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (text) {
+                        resultText = text;
+                        // 快速驗證是否含有 json 或 類似格式
+                        if (text.includes('[') && text.includes(']')) {
+                            success = true;
+                            break;
+                        }
+                        throw new Error("Response is not JSON array.");
+                    } else {
+                        throw new Error("Invalid response JSON structure.");
+                    }
+                } catch (err) {
+                    if (i === 4) {
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+
+            if (success) {
+                updateRecord(id, { aiGuide: resultText });
+            } else {
+                updateRecord(id, { aiGuide: 'error' });
+            }
+        }
+
+        // 手動觸發重新生成
+        function handleRegenerate(id, content, category, travelDays) {
+            triggerAIGeneration(id, content, category, travelDays);
+        }
+
+        // 按讚（想去指數）事件處理
+        function handleLikeClick(id, currentLikes) {
+            updateRecord(id, { likes: currentLikes + 1 });
+        }
+
+        // 狀態切換事件處理
+        function handleStatusToggle(id, nextStatus) {
+            updateRecord(id, { status: nextStatus });
+        }
+
+        // 安全防護：避免 XSS 注入
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // 安全處理 JavaScript 點擊字串屬性
+        function escapeQuote(text) {
+            if (!text) return '';
+            return text.replace(/'/g, "\\'");
+        }
+    </script>
+</body>
+</html>
