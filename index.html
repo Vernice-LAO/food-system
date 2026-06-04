@@ -428,8 +428,6 @@
             border-radius: 8px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             z-index: 1000;
-            font-size: 0.9rem;
-            font-weight: bold;
             display: none;
             animation: slideIn 0.3s ease;
         }
@@ -524,6 +522,11 @@
     <div id="toast" class="toast"></div>
 
     <script>
+        // ==========================================
+        //  後端連接器 (Backend Connector Config)
+        // ==========================================
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdI5irWnz5g4WLnt76xRO768iUZYXT8R_zXfmLrDCJFa35MdUOVbUsIfFbei_w3TVj/exec";
+
         // --- 全域變數狀態管制 ---
         let currentFilter = 'all';
 
@@ -532,11 +535,13 @@
             initApp();
         });
 
-        // 初始化系統元件
-        function initApp() {
-            // 自載入儲存庫
-            const initialRecords = loadData();
-            renderList(initialRecords);
+        // 初始化系統元件 (結合雲端載入與離線 Fallback 檢查)
+        async function initApp() {
+            showToast("⏳ 正在與雲端資料庫同步中...");
+            
+            // 優先從 Google Sheet API 取得最新資料
+            const records = await fetchRecordsFromSheet();
+            renderList(records);
 
             // 監聽新增表單
             const form = document.getElementById('studyForm');
@@ -596,8 +601,73 @@
             document.getElementById('studyForm').reset();
             document.getElementById('selectPriority').value = 'medium';
             document.getElementById('inputHours').value = '2';
-            
-            showToast('🌱 成功加入一筆全新的學習項目！');
+        }
+
+
+        // ==========================================
+        //  後端雲端資料串接與規格化模組
+        // ==========================================
+
+        /**
+         * 透過 POST 將新增/修改事件即時同步回 Google Sheet 資料庫
+         * @param {Object} payload POST 傳送的主體，如 { action: "create", record } 或 { action: "update", record }
+         */
+        async function syncToSheet(payload) {
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!data.ok) {
+                    console.error("同步至 Google Sheet 失敗:", data.error);
+                    showToast("⚠️ 同步失敗：" + data.error);
+                } else {
+                    console.log("雲端同步成功:", data.message);
+                }
+            } catch (err) {
+                console.warn("無法連接至雲端伺服器，已先啟用本地快取:", err);
+                showToast("⚠️ 網路連線不穩，已在離線模式為您排隊同步。");
+            }
+        }
+
+        /**
+         * 透過 GET 自 Web App API 取得最新資料並對齊前端欄位
+         */
+        async function fetchRecordsFromSheet() {
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const data = await response.json();
+                if (data.ok && data.records) {
+                    // 對每一筆紀錄進行萬全的鍵名歸一化 (Normalization)
+                    const normalized = data.records.map(rec => normalizeRecord(rec));
+                    // 同步快取至 localStorage 作為離線備份防護
+                    localStorage.setItem('records', JSON.stringify(normalized));
+                    showToast("☁️ 雲端同步載入成功！");
+                    return normalized;
+                }
+                throw new Error(data.error || "傳回資料格式異常");
+            } catch (err) {
+                console.warn("啟用離線備份，載入本機 localStorage:", err);
+                showToast("🔌 已自動切換至離線（本地備份）模式");
+                return loadData(); // 發生網路連線或 API 故障時自動 Fallback
+            }
+        }
+
+        /**
+         * 確保資料不論從 localStorage 或是從 Google Sheet 的欄位中獲取，鍵名與值型態均維持 frontend contract
+         */
+        function normalizeRecord(record) {
+            return {
+                id: record.id || record["系統 ID"] || "",
+                createdAt: record.createdAt || record["建立時間"] || new Date().toISOString(),
+                status: record.status || record["事項狀態"] || "active",
+                waitingToDo: record.waitingToDo || record["待辦學習事項"] || "",
+                priority: record.priority || record["優先權"] || "medium",
+                estimatedHours: Number(record.estimatedHours || record["預估時數 (小時)"] || 1),
+                remarks: record.remarks || record["補充備註"] || ""
+            };
         }
 
 
@@ -611,7 +681,6 @@
          * @param {Object} formData 包含 waitingToDo, priority, estimatedHours, remarks 的暫存物件
          */
         function createRecord(formData) {
-            // 生成獨特專用識別 ID
             const uniqueId = 'study_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
             const newRecord = {
@@ -624,7 +693,13 @@
                 remarks: formData.remarks
             };
 
+            // 先同步至本地快取與畫面渲染，確保操作流暢毫無遲滯
             saveData(newRecord);
+            
+            // 同步至雲端資料庫
+            syncToSheet({ action: "create", record: newRecord });
+            
+            showToast('🌱 成功加入一筆全新的學習項目！');
         }
 
         /**
@@ -637,7 +712,7 @@
             records.push(record);
             localStorage.setItem('records', JSON.stringify(records));
 
-            // 優化點：重設篩選為「全部」，確保新增的 Active 項目能立刻在畫面上被看見
+            // 重設篩選為「全部」，確保新增的 Active 項目能立刻在畫面上被看見
             resetFilterToAll();
         }
 
@@ -734,7 +809,7 @@
 
         /**
          * 5. updateRecord(id, changes)
-         * 職責：更新指定 id 的單筆 record，並重新寫入 localStorage。
+         * 職責：更新指定 id 的單筆 record，並重新寫入 localStorage 與 Google Sheet。
          * @param {String} id 唯一識別碼
          * @param {Object} changes 包含要修改鍵值的變更對象
          */
@@ -743,15 +818,21 @@
             const index = records.findIndex(rec => rec.id === id);
 
             if (index !== -1) {
-                // 合併修改內容
+                // 合併修改內容到本地快取
                 records[index] = {
                     ...records[index],
                     ...changes
                 };
                 localStorage.setItem('records', JSON.stringify(records));
                 
-                // 更新後，套用當前篩選並重新渲染
+                // 套用當前篩選並重新渲染
                 applyFilter();
+                
+                // 同步更新至雲端 Google Sheet (帶入當前完整 record 或異動)
+                syncToSheet({ 
+                    action: "update", 
+                    record: { id: id, ...changes } 
+                });
             }
         }
 
