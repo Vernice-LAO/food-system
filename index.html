@@ -1,846 +1,841 @@
+學習清單備忘系統:index.html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>個人旅行攻略系統</title>
+    <title>study_list 學習探討與備忘系統</title>
+    <!-- 引入 Google Fonts (Noto Sans TC) 與 FontAwesome 圖示 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* ---------- 原有 CSS 完全保留，此處省略以節省篇幅 ---------- */
-        /* 實際使用時請貼上您原本的完整 style 區塊 */
+        /* 日系無印極簡美學變數 */
         :root {
-            --primary-color: #0984e3;
-            --primary-hover: #74b9ff;
-            --success-color: #2ed573;
-            --accent-color: #e84393;
-            --bg-color: #f1f2f6;
-            --card-bg: #ffffff;
-            --text-color: #2f3542;
-            --border-radius: 12px;
+            --bg-color: #f7f5f0;       /* 柔和暖白米色 */
+            --card-bg: #ffffff;        /* 純白卡片 */
+            --text-main: #3e3a36;      /* 深木炭灰 */
+            --text-muted: #8c827a;     /* 溫和卡其灰 */
+            --border-color: #e6e1da;   /* 淺泥灰邊框 */
+            --primary: #4a5e6a;        /* 霧藍綠 */
+            --primary-light: #f0f3f5;
+            --accent-active: #df826c;  /* 暖珊瑚橘 (Active 狀態) */
+            --accent-done: #8ba888;    /* 抹茶綠 (Done 狀態) */
+            --shadow: 0 4px 12px rgba(62, 58, 54, 0.04);
+            --shadow-hover: 0 10px 20px rgba(62, 58, 54, 0.08);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             line-height: 1.6;
-            padding: 20px;
+            padding: 2.5rem 1rem;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
+        /* 標題區域 */
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 3rem;
         }
 
         header h1 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
         }
 
         header p {
-            color: #747d8c;
-            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            font-weight: 400;
         }
 
-        /* 表單區塊樣式 */
-        .form-section {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-
-        .form-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-            border-bottom: 2px solid #f1f2f6;
-            padding-bottom: 8px;
-        }
-
-        .form-grid {
+        /* 左右雙欄結構 */
+        .layout-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
         }
 
-        @media (max-width: 600px) {
-            .form-grid {
-                grid-template-columns: 1fr;
+        @media (min-width: 850px) {
+            .layout-grid {
+                grid-template-columns: 360px 1fr;
             }
         }
 
+        /* 卡片統一樣式 */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1.5px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        /* 表單元素樣式 */
         .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        @media (max-width: 600px) {
-            .form-group.full-width {
-                grid-column: span 1;
-            }
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ced4da;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
+            background-color: #fafaf9;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: all 0.25s ease;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(74, 94, 106, 0.12);
         }
 
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
+        .input-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* 提交按鈕 */
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background-color: #0773c5;
-        }
-
-        /* 篩選器區塊樣式 */
-        .filter-section {
-            background-color: var(--card-bg);
-            padding: 15px 20px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-group label {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #57606f;
-        }
-
-        .filter-select {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            font-size: 0.9rem;
-        }
-
-        /* 卡片看板樣式 */
-        .record-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .record-card {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--primary-color);
-            position: relative;
-            transition: transform 0.2s, opacity 0.3s;
-        }
-
-        .record-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .record-card.status-done {
-            border-left-color: #a4b0be;
-            opacity: 0.9;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #747d8c;
-            border-bottom: 1px dashed #f1f2f6;
-            padding-bottom: 8px;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: white;
-            font-size: 0.8rem;
-        }
-
-        .badge-foreign { background-color: #6c5ce7; }
-        .badge-domestic { background-color: #00b894; }
-        .badge-short { background-color: #fdcb6e; color: #2f3542; }
-        .badge-other { background-color: #747d8c; }
-
-        .status-badge {
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-left: 6px;
-            font-weight: bold;
-        }
-        .status-active { background-color: #e3faf2; color: var(--success-color); }
-        .status-done { background-color: #f1f2f6; color: #57606f; }
-
-        .card-destination-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .card-destination {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .card-days {
-            font-size: 1rem;
-            font-weight: bold;
-            background-color: #ffeaa7;
-            color: #d63031;
-            padding: 4px 10px;
-            border-radius: 6px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* 費用顯示區塊 */
-        .card-costs {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-size: 0.95rem;
-        }
-
-        @media (max-width: 600px) {
-            .card-costs {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-        }
-
-        .cost-item {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .cost-label {
-            color: #747d8c;
-            font-size: 0.85rem;
-            margin-bottom: 2px;
-        }
-
-        .cost-value {
-            font-weight: bold;
-            color: #2f3542;
-            font-size: 1.1rem;
-        }
-
-        .cost-item.total-cost {
-            border-left: 1px solid #ddd;
-            padding-left: 15px;
-        }
-
-        @media (max-width: 600px) {
-            .cost-item.total-cost {
-                border-left: none;
-                padding-left: 0;
-                border-top: 1px dashed #ddd;
-                padding-top: 8px;
-            }
-        }
-
-        /* AI 互動區域樣式 */
-        .ai-guide-container {
-            background-color: #f6f8fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 18px;
-            border: 1px dashed #74b9ff;
-        }
-
-        .ai-guide-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 12px;
-            font-size: 1rem;
-            border-bottom: 1px solid #e1e4e8;
-            padding-bottom: 8px;
-        }
-
-        /* 候選景點選擇器網格 */
-        .spots-selector-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        @media (max-width: 650px) {
-            .spots-selector-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .spot-option {
-            background-color: #ffffff;
-            border: 2px solid #e1e4e8;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
+            color: #ffffff;
+            background-color: var(--primary);
             transition: all 0.2s ease;
-            position: relative;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            user-select: none;
+            box-shadow: 0 4px 10px rgba(74, 94, 106, 0.15);
         }
 
-        .spot-option:hover {
-            border-color: var(--primary-color);
+        .btn-submit:hover {
+            background-color: #3b4b55;
             transform: translateY(-1px);
         }
 
-        .spot-option.selected {
-            border-color: var(--success-color);
-            background-color: #f0fff4;
-        }
-
-        .spot-checkbox {
-            margin-top: 3px;
-            width: 18px;
-            height: 18px;
-            accent-color: var(--success-color);
-            cursor: pointer;
-        }
-
-        .spot-details {
+        /* 右側展示篩選與卡片牆工具列 */
+        .toolbar {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
-        .spot-name {
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: #2f3542;
+        @media (min-width: 600px) {
+            .toolbar {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
-        .spot-reason {
-            font-size: 0.8rem;
-            color: #747d8c;
-            line-height: 1.4;
-        }
-
-        .spot-meta-tags {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-            flex-wrap: wrap;
-        }
-
-        .spot-tag {
-            font-size: 0.75rem;
-            padding: 1px 6px;
-            border-radius: 4px;
-            background-color: #f1f2f6;
-            color: #57606f;
-        }
-
-        /* 精選行程表 */
-        .itinerary-table-section {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #e1e4e8;
-            margin-top: 15px;
-        }
-
-        .table-title {
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: var(--text-color);
-            margin-bottom: 10px;
+        .toolbar-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 0.5rem;
         }
 
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .itinerary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            text-align: left;
-        }
-
-        .itinerary-table th {
-            background-color: #f1f2f6;
-            color: #57606f;
-            padding: 10px;
-            font-weight: bold;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .itinerary-table td {
-            padding: 10px;
-            border-bottom: 1px solid #e1e4e8;
-            vertical-align: middle;
-        }
-
-        .itinerary-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* 旋轉動畫（載入中效果） */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(9, 132, 227, 0.2);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .card-actions {
+        /* 極簡篩選標籤 */
+        .filter-tabs {
             display: flex;
-            gap: 12px;
-            justify-content: flex-start;
-            flex-wrap: wrap;
+            background-color: #e9e4dc;
+            padding: 0.3rem;
+            border-radius: 30px;
+            gap: 0.25rem;
+        }
+
+        .filter-tab {
+            border: none;
+            background: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.25s ease;
+        }
+
+        .filter-tab.active {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* 學習事項卡片展示牆 */
+        .records-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 650px) {
+            .records-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .study-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .study-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* 事項狀態邊框視覺提示 */
+        .study-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-color: var(--accent-active);
+        }
+
+        .study-card.is-done::before {
+            background-color: var(--accent-done);
+        }
+
+        /* 卡片頭部：標籤、時間 */
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tag-group {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .tag-priority-high { background-color: #fee2e2; color: #b91c1c; }
+        .tag-priority-medium { background-color: #fef3c7; color: #d97706; }
+        .tag-priority-low { background-color: #f0fdf4; color: #15803d; }
+
+        .tag-status-active {
+            background-color: #fff4f2;
+            color: var(--accent-active);
+            border: 1px solid #ffd4cc;
+        }
+
+        .tag-status-done {
+            background-color: #f1f8f0;
+            color: var(--accent-done);
+            border: 1px dashed #cde2cc;
+        }
+
+        .card-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* 核心內文 */
+        .card-body {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        /* 註記 */
+        .card-remarks {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            background-color: #fafafa;
+            border-radius: 6px;
+            padding: 0.6rem;
+            border-left: 3px solid var(--border-color);
+            margin-bottom: 1.25rem;
+            font-style: italic;
+            word-break: break-all;
+        }
+
+        /* 學習時數資訊 */
+        .card-info {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: auto;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+        }
+
+        .card-info i {
+            color: var(--primary);
+        }
+
+        /* 底部控制按鈕 */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.85rem;
         }
 
         .btn-action {
-            padding: 6px 14px;
-            border: 1px solid #ced4da;
-            background-color: #fff;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
             border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
             cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-weight: 500;
-            transition: all 0.2s;
+            gap: 0.3rem;
+            transition: all 0.2s ease;
         }
 
-        .btn-action:hover {
-            background-color: #f1f2f6;
+        .btn-toggle {
+            color: var(--primary);
+            background-color: #fafafa;
         }
 
-        .btn-like {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        .btn-like:hover {
-            background-color: #fff0f6;
+        .btn-toggle:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
         }
 
-        .btn-toggle-status {
-            color: #2f3542;
+        .btn-delete {
+            color: #c62828;
+            border: none;
         }
 
-        .no-data {
+        .btn-delete:hover {
+            background-color: #ffebee;
+            color: #b71c1c;
+        }
+
+        /* 完成狀態 (done) 卡片樣式 */
+        .study-card.is-done .card-body {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .study-card.is-done {
+            background-color: #fbfbf9;
+            opacity: 0.85;
+        }
+
+        /* 滿版空清單 */
+        .empty-state {
+            grid-column: 1 / -1;
             text-align: center;
-            color: #a4b0be;
-            padding: 50px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            font-size: 1.1rem;
+            padding: 4.5rem 2rem;
+            color: var(--text-muted);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+            color: var(--primary);
+        }
+
+        /* 彈出訊息提示 */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--text-main);
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(1.5rem); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- 標頭 -->
         <header>
-            <h1>✈️ 個人旅行攻略系統</h1>
-            <p>點選喜愛的 AI 推薦景點，即時為您排版專屬行程表格！</p>
+            <h1>📚 study_list</h1>
+            <p>簡單、專注的學習探討與備考事項備忘小幫手</p>
         </header>
 
-        <!-- 行程攻略輸入表單 -->
-        <section class="form-section">
-            <h2 class="form-title">📝 新增目的地攻略 (AI 自動生成景點)</h2>
-            <form id="itineraryForm">
-                <div class="form-grid">
+        <!-- 主體網格 -->
+        <main class="layout-grid">
+            
+            <!-- 左欄：研習事項新增表單 -->
+            <section class="card">
+                <div class="card-title">
+                    <i class="fa-solid fa-feather-pointed"></i> 記下研習任務
+                </div>
+                <form id="studyForm" novalidate>
+                    
+                    <!-- 1. waiting to do (必填) -->
                     <div class="form-group">
-                        <label for="content">目的地名稱 <span style="color: red;">*</span></label>
-                        <input type="text" id="content" class="form-control" placeholder="例如：日本東京、台灣墾丁、泰國曼谷" required>
+                        <label for="inputWaiting">學習備忘事項 * (waiting to do)</label>
+                        <input type="text" id="inputWaiting" class="form-control" placeholder="例：詳讀 React Hooks 原始碼並手寫筆記" required autocomplete="off">
                     </div>
 
+                    <!-- 2. 學習優先權 & 預估時間 -->
                     <div class="form-group">
-                        <label for="category">旅遊分類</label>
-                        <select id="category" class="form-control">
-                            <option value="國外旅遊">國外旅遊</option>
-                            <option value="國內旅遊">國內旅遊</option>
-                            <option value="短途周邊">短途周邊</option>
-                            <option value="其他">其他</option>
-                        </select>
+                        <div class="input-row">
+                            <div>
+                                <label for="selectPriority">優先權 *</label>
+                                <select id="selectPriority" class="form-control" required>
+                                    <option value="high">🔥 高</option>
+                                    <option value="medium" selected>⚡ 中</option>
+                                    <option value="low">🌱 低</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="inputHours">預估時數 (小時) *</label>
+                                <input type="number" id="inputHours" class="form-control" min="1" max="100" value="2" required>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- 3. 補充說明 -->
                     <div class="form-group">
-                        <label for="flightCost">機票預估費用 (MOP) <span style="color: red;">*</span></label>
-                        <input type="number" id="flightCost" class="form-control" min="0" placeholder="請輸入金額" required>
+                        <label for="inputRemarks">補充註記與吐槽 (選填)</label>
+                        <textarea id="inputRemarks" class="form-control" style="resize: vertical; min-height: 80px;" placeholder="例：希望下午前能徹底看懂，別再分心滑手機了！"></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="hotelCost">酒店預估費用 (MOP) <span style="color: red;">*</span></label>
-                        <input type="number" id="hotelCost" class="form-control" min="0" placeholder="請輸入金額" required>
-                    </div>
+                    <!-- 提交按鈕 -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-folder-plus"></i> 新增研習事項
+                    </button>
+                </form>
+            </section>
 
-                    <div class="form-group full-width">
-                        <label for="travelDays">預計遊玩天數 (天) <span style="color: red;">*</span></label>
-                        <input type="number" id="travelDays" class="form-control" min="1" step="1" placeholder="例如：5" required>
+            <!-- 右欄：景點備忘卡片牆 -->
+            <section style="display: flex; flex-direction: column;">
+                
+                <!-- 篩選控制列 -->
+                <div class="toolbar">
+                    <div class="toolbar-title">
+                        <i class="fa-solid fa-book-open"></i> 研習清單
+                    </div>
+                    <div class="filter-tabs" id="filterTabs">
+                        <button class="filter-tab active" data-filter="all">全部</button>
+                        <button class="filter-tab" data-filter="active">研習中</button>
+                        <button class="filter-tab" data-filter="done">已修得</button>
                     </div>
                 </div>
-                <button type="submit" class="btn">新增目的地並生成 AI 候選景點</button>
-            </form>
-        </section>
 
-        <!-- 篩選控制列 -->
-        <section class="filter-section">
-            <div class="filter-group">
-                <label for="statusFilter">狀態篩選：</label>
-                <select id="statusFilter" class="filter-select">
-                    <option value="全部">全部</option>
-                    <option value="active">計畫中</option>
-                    <option value="done">已完成</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="categoryFilter">分類篩選：</label>
-                <select id="categoryFilter" class="filter-select">
-                    <option value="全部">全部</option>
-                    <option value="國外旅遊">國外旅遊</option>
-                    <option value="國內旅遊">國內旅遊</option>
-                    <option value="短途周邊">短途周邊</option>
-                    <option value="其他">其他</option>
-                </select>
-            </div>
-        </section>
+                <!-- 備忘卡片牆 -->
+                <div id="recordsContainer" class="records-grid">
+                    <!-- 由 JavaScript 動態繪製 -->
+                </div>
+            </section>
 
-        <!-- 行程即時顯示看板 -->
-        <main class="record-list" id="recordContainer">
-            <!-- 目的地卡片將由 JavaScript 動態渲染 -->
         </main>
     </div>
 
+    <!-- 提示框 -->
+    <div id="toast" class="toast"></div>
+
     <script>
-        // ==================== Backend Connector ====================
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywMs2WX2qt8PUFjfj2MfWhiSk3bPzu1lbmLGJilxIVAEFgnavWNL5NKiJbYF3Fy23F6Q/exec";
-        
-        // 主 storage key (localStorage 備份)
-        const STORAGE_KEY = 'records';
+        // --- 全域變數狀態管制 ---
+        let currentFilter = 'all';
 
-        // ---------- Sheet API 通訊 ----------
-        async function syncToSheet(payload) {
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors", // 避免 CORS 錯誤 (Google Apps Script 部署需設定)
-                    headers: { "Content-Type": "text/plain" },
-                    body: JSON.stringify(payload)
-                });
-                // 因 no-cors 模式無法讀取回應內容，預設成功
-                console.log("Sync to sheet:", payload);
-                return { ok: true };
-            } catch (err) {
-                console.error("Sync to sheet failed:", err);
-                return { ok: false, error: err.message };
-            }
-        }
+        // 頁面初次載入
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
 
-        async function fetchRecordsFromSheet() {
-            try {
-                const response = await fetch(APPS_SCRIPT_URL);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                if (!data.ok) throw new Error(data.error || "Unknown error");
-                
-                // 正規化每筆紀錄
-                const records = (data.records || []).map(normalizeRecord);
-                return records;
-            } catch (err) {
-                console.error("Fetch from sheet failed:", err);
-                return null;
-            }
-        }
+        // 初始化系統元件
+        function initApp() {
+            // 自載入儲存庫
+            const initialRecords = loadData();
+            renderList(initialRecords);
 
-        // 將 Sheet 欄位對應回前端 key
-        function normalizeRecord(sheetRecord) {
-            // 預設空物件
-            const record = {};
-            
-            // 直接對應 (Sheet header → frontend key)
-            record.id = sheetRecord["記錄ID"] || sheetRecord["id"] || "";
-            record.createdAt = sheetRecord["新增時間"] || sheetRecord["createdAt"] || "";
-            record.status = sheetRecord["狀態"] || sheetRecord["status"] || "active";
-            record.content = sheetRecord["目的地"] || sheetRecord["content"] || "";
-            record.category = sheetRecord["分類"] || sheetRecord["category"] || "國外旅遊";
-            
-            // 數字欄位轉換
-            record.flightCost = Number(sheetRecord["機票費用_MOP"] ?? sheetRecord["flightCost"] ?? 0);
-            record.hotelCost = Number(sheetRecord["酒店費用_MOP"] ?? sheetRecord["hotelCost"] ?? 0);
-            record.travelDays = Number(sheetRecord["遊玩天數"] ?? sheetRecord["travelDays"] ?? 1);
-            record.likes = Number(sheetRecord["想去指數"] ?? sheetRecord["likes"] ?? 0);
-            
-            // 字串欄位
-            record.aiGuide = sheetRecord["AI景點資料"] || sheetRecord["aiGuide"] || "pending";
-            
-            // 已選景點：Sheet 儲存 JSON 字串，需 parse
-            let selectedSpotsRaw = sheetRecord["已選景點"] || sheetRecord["selectedSpots"] || "[]";
-            if (typeof selectedSpotsRaw === "string") {
-                try {
-                    record.selectedSpots = JSON.parse(selectedSpotsRaw);
-                } catch(e) {
-                    record.selectedSpots = [];
+            // 監聽新增表單
+            const form = document.getElementById('studyForm');
+            form.addEventListener('submit', onFormSubmit);
+
+            // 監聽篩選按鈕群組
+            const filterTabs = document.getElementById('filterTabs');
+            filterTabs.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-tab')) {
+                    document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    currentFilter = e.target.dataset.filter;
+                    applyFilter();
                 }
-            } else if (Array.isArray(selectedSpotsRaw)) {
-                record.selectedSpots = selectedSpotsRaw;
-            } else {
-                record.selectedSpots = [];
-            }
-            
-            return record;
-        }
-
-        // ---------- 原有 localStorage 操作 (保留作為 fallback) ----------
-        function saveData(records) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-        }
-
-        function loadDataFromLocal() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        
-        // ---------- 主要資料讀取 (Sheet 優先 + localStorage fallback) ----------
-        async function loadData() {
-            // 嘗試從 Sheet 讀取
-            const sheetRecords = await fetchRecordsFromSheet();
-            if (sheetRecords !== null && sheetRecords.length > 0) {
-                // 同步一份到 localStorage 做備份
-                saveData(sheetRecords);
-                return sheetRecords;
-            }
-            
-            // Sheet 讀取失敗或無資料，改用 localStorage
-            console.log("Fallback to localStorage");
-            return loadDataFromLocal();
-        }
-
-        // ---------- 建立紀錄 (同時寫入 Sheet 與 localStorage) ----------
-        async function createRecord(formData) {
-            const allRecords = await loadData(); // 取得最新資料
-            
-            const now = new Date();
-            const createdAtStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-            const newRecord = {
-                id: 'tr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-                createdAt: createdAtStr,
-                status: 'active',
-                content: formData.content,
-                category: formData.category,
-                flightCost: formData.flightCost,
-                hotelCost: formData.hotelCost,
-                travelDays: formData.travelDays,
-                likes: 0,
-                aiGuide: 'pending',
-                selectedSpots: []
-            };
-
-            // 新增至最上方 (模擬原本行為)
-            allRecords.unshift(newRecord);
-            saveData(allRecords);
-            
-            // 同步到 Google Sheet (非同步，不等待結果)
-            syncToSheet({ action: "create", record: newRecord });
-            
-            // 觸發 AI 生成 (背景)
-            triggerAIGeneration(newRecord.id, newRecord.content, newRecord.category, newRecord.travelDays);
-            
-            return newRecord;
-        }
-
-        // ---------- 更新紀錄 (同時寫入 Sheet 與 localStorage) ----------
-        async function updateRecord(id, changes) {
-            const allRecords = await loadData();
-            const index = allRecords.findIndex(item => item.id === id);
-            
-            if (index !== -1) {
-                // 更新記憶體中資料
-                allRecords[index] = { ...allRecords[index], ...changes };
-                saveData(allRecords);
-                
-                // 同步到 Google Sheet
-                syncToSheet({ action: "update", id: id, updates: changes });
-                
-                // 重新渲染 (由外部呼叫 filterAndRender)
-                return true;
-            }
-            return false;
-        }
-
-        // ---------- 其餘 UI 邏輯完全保留 ----------
-        // 註：以下函數 (filterAndRender, renderList, handleLikeClick, handleStatusToggle, 
-        // handleRegenerate, triggerAIGeneration, escapeHtml, escapeQuote, toggleSpotSelection)
-        // 與原本相同，但因為 updateRecord 已改為非同步，需要調整相關呼叫方式。
-        // 為了避免重複改動過多，我會將 filterAndRender 改為 async，並確保資料最新。
-        
-        // ---------- 輔助: 重新載入並篩選渲染 ----------
-        async function filterAndRender() {
-            const allRecords = await loadData();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const categoryFilter = document.getElementById('categoryFilter').value;
-
-            const filtered = allRecords.filter(record => {
-                const matchStatus = (statusFilter === '全部') || (record.status === statusFilter);
-                const matchCategory = (categoryFilter === '全部') || (record.category === categoryFilter);
-                return matchStatus && matchCategory;
             });
-
-            renderList(filtered);
         }
 
-        // renderList 函數與原版相同 (僅需微調 selectedSpots 確保為陣列)
-        function renderList(recordsToShow) {
-            const container = document.getElementById('recordContainer');
-            container.innerHTML = '';
+        // 當表單提交時
+        function onFormSubmit(e) {
+            e.preventDefault();
 
-            if (recordsToShow.length === 0) {
-                container.innerHTML = '<div class="no-data">目前沒有符合條件的目的地攻略，快去建立一個吧！</div>';
+            const waitingInput = document.getElementById('inputWaiting');
+            const prioritySelect = document.getElementById('selectPriority');
+            const hoursInput = document.getElementById('inputHours');
+            const remarksInput = document.getElementById('inputRemarks');
+
+            // 取值與修飾
+            const waitingToDo = waitingInput.value.trim();
+            const priority = prioritySelect.value;
+            const estimatedHours = parseInt(hoursInput.value, 10);
+            const remarks = remarksInput.value.trim();
+
+            // 必填欄位驗證
+            if (!waitingToDo) {
+                showToast('請輸入待辦學習事項內容！');
+                waitingInput.focus();
+                return;
+            }
+            if (isNaN(estimatedHours) || estimatedHours < 1) {
+                showToast('預估學習時數必須為大於或等於 1 的數字！');
+                hoursInput.focus();
                 return;
             }
 
-            recordsToShow.forEach(record => {
-                // 確保 selectedSpots 是陣列
-                if (!Array.isArray(record.selectedSpots)) record.selectedSpots = [];
-                
+            const formData = {
+                waitingToDo: waitingToDo,
+                priority: priority,
+                estimatedHours: estimatedHours,
+                remarks: remarks
+            };
+
+            // 依技術要求建立新紀錄
+            createRecord(formData);
+            
+            // 清空表單
+            document.getElementById('studyForm').reset();
+            document.getElementById('selectPriority').value = 'medium';
+            document.getElementById('inputHours').value = '2';
+            
+            showToast('🌱 成功加入一筆全新的學習項目！');
+        }
+
+
+        // ==========================================
+        //  技術要求：指定規格之核心函數 (嚴格拆分)
+        // ==========================================
+
+        /**
+         * 1. createRecord(formData)
+         * 職責：根據表單內容建立一筆新 record object。
+         * @param {Object} formData 包含 waitingToDo, priority, estimatedHours, remarks 的暫存物件
+         */
+        function createRecord(formData) {
+            // 生成獨特專用識別 ID
+            const uniqueId = 'study_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+
+            const newRecord = {
+                id: uniqueId,
+                createdAt: new Date().toISOString(), // 依規格使用 new Date().toISOString()
+                status: 'active', // 預設 active
+                waitingToDo: formData.waitingToDo,
+                priority: formData.priority,
+                estimatedHours: Number(formData.estimatedHours),
+                remarks: formData.remarks
+            };
+
+            saveData(newRecord);
+        }
+
+        /**
+         * 2. saveData(record)
+         * 職責：只負責新增一筆 record 到 records array，然後寫入 localStorage。
+         * @param {Object} record 單筆待儲存的學習紀錄物件
+         */
+        function saveData(record) {
+            const records = loadData();
+            records.push(record);
+            localStorage.setItem('records', JSON.stringify(records));
+
+            // 優化點：重設篩選為「全部」，確保新增的 Active 項目能立刻在畫面上被看見
+            resetFilterToAll();
+        }
+
+        /**
+         * 3. loadData()
+         * 職責：從 localStorage 讀取 records array；沒有資料就回傳 []。
+         * @returns {Array} 學習紀錄陣列
+         */
+        function loadData() {
+            const rawData = localStorage.getItem('records');
+            try {
+                return rawData ? JSON.parse(rawData) : [];
+            } catch (err) {
+                console.error("讀取歷史儲存檔失敗：", err);
+                return [];
+            }
+        }
+
+        /**
+         * 4. renderList(recordsToShow)
+         * 職責：接收過濾後的 records 陣列，負責乾淨地渲染到畫面上。
+         * @param {Array} recordsToShow 要渲染到畫面的紀錄陣列
+         */
+        function renderList(recordsToShow) {
+            const container = document.getElementById('recordsContainer');
+            container.innerHTML = ''; // 清空先前的內容
+
+            // 倘若為空，顯示提示頁面
+            if (!recordsToShow || recordsToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fa-solid fa-mug-hot"></i></div>
+                        <h3>當前無研習任務</h3>
+                        <p>現在正是放鬆或寫下新一項學習計畫的好時機！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 排版：新新增的事項顯示在最前方（建立時間降序）
+            const sortedRecords = [...recordsToShow].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            sortedRecords.forEach(record => {
                 const card = document.createElement('div');
-                card.className = `record-card ${record.status === 'done' ? 'status-done' : ''}`;
+                card.className = `study-card ${record.status === 'done' ? 'is-done' : ''}`;
 
-                let categoryClass = 'badge-other';
-                if (record.category === '國外旅遊') categoryClass = 'badge-foreign';
-                if (record.category === '國內旅遊') categoryClass = 'badge-domestic';
-                if (record.category === '短途周邊') categoryClass = 'badge-short';
+                // 優先權與狀態標籤轉換
+                const priorityText = record.priority === 'high' ? '高優先度' : record.priority === 'medium' ? '中優先度' : '低優先度';
+                
+                // 狀態戳章與對應按鈕文字 (XXX_STATUS_DONE_TEXT)
+                const statusBadgeHtml = record.status === 'done'
+                    ? `<span class="tag tag-status-done"><i class="fa-solid fa-graduation-cap"></i> 🎓 已修得 (Done)</span>`
+                    : `<span class="tag tag-status-active"><i class="fa-solid fa-pencil"></i> ✍️ 研習中 (Active)</span>`;
 
-                const statusTxt = record.status === 'active' ? '計畫中' : '已完成';
-                const statusBadgeClass = record.status === 'active' ? 'status-active' : 'status-done';
-                const toggleBtnTxt = record.status === 'active' ? '✅ 標記已完成' : '🔄 恢復計畫中';
-                const nextStatus = record.status === 'active' ? 'done' : 'active';
+                const toggleBtnText = record.status === 'active'
+                    ? '<i class="fa-solid fa-square-check"></i> 標記已完成'
+                    : '<i class="fa-solid fa-rotate-left"></i> 恢復 Active';
 
-                const formattedFlight = Number(record.flightCost).toLocaleString();
-                const formattedHotel = Number(record.hotelCost).toLocaleString();
-                const totalCostValue = Number(record.flightCost) + Number(record.hotelCost);
-                const totalCost = totalCostValue.toLocaleString();
-                const days = Number(record.travelDays) || 1;
-                const dailyAverage = Math.round(totalCostValue / days).toLocaleString();
+                // 防止 XSS 攻擊的內容轉換
+                const safeWaiting = escapeHtml(record.waitingToDo);
+                const safeRemarks = escapeHtml(record.remarks);
 
-                // AI 攻略區塊 (與原版相同，略縮)
-                let aiGuideHtml = '';
-                if (record.aiGuide === 'pending' || record.aiGuide === 'loading') {
-                    aiGuideHtml = `<div class="ai-guide-container"><div class="ai-guide-title"><div class="spinner"></div><span>🤖 AI 正在為您搜集必去景點候選名單...</span></div><div class="ai-content" style="color: #a4b0be; font-style: italic;">正在分析當地最熱門的 5 大推薦景點與消費估算，請稍候 5-10 秒...</div></div>`;
-                } else if (record.aiGuide === 'error') {
-                    aiGuideHtml = `<div class="ai-guide-container" style="border-color: #ff7675;"><div class="ai-guide-title" style="color: #ff7675;"><span>❌ AI 景點載入失敗</span></div><div class="ai-content">伺服器忙碌中，請點選下方「🔄 重新生成」按鈕重新獲取數據。</div></div>`;
-                } else {
-                    let spots = [];
-                    try {
-                        spots = JSON.parse(record.aiGuide);
-                    } catch (e) {
-                        const jsonMatch = record.aiGuide.match(/```json([\s\S]*?)```/);
-                        if (jsonMatch && jsonMatch[1]) {
-                            try { spots = JSON.parse(jsonMatch[1].trim()); } catch(e2) { spots = []; }
-                        }
-                    }
-                    if (spots && spots.length > 0) {
-                        let selectorCardsHtml = '', tableRowsHtml = '';
-                        const selectedList = record.selectedSpots || [];
-                        spots.forEach((spot) => {
-                            const isSelected = selectedList.includes(spot.name);
-                            const selectedClass = isSelected ? 'selected' : '';
-                            const checkedAttr = isSelected ? 'checked' : '';
-                            selectorCardsHtml += `<div class="spot-option ${selectedClass}" onclick="toggleSpotSelection('${record.id}', '${escapeQuote(spot.name)}')"><input type="checkbox" class="spot-checkbox" ${checkedAttr} onclick="event.stopPropagation(); toggleSpotSelection('${record.id}', '${escapeQuote(spot.name)}')"><div class="spot-details"><div class="spot-name">${escapeHtml(spot.name)}</div><div class="spot-reason">${escapeHtml(spot.reason)}</div><div class="spot-meta-tags"><span class="spot-tag">⏱️ 建議遊玩: ${escapeHtml(spot.suggestedTime || '1.5-2小時')}</span><span class="spot-tag">💵 估算: ${escapeHtml(spot.cost || '免費')}</span></div></div></div>`;
-                            if (isSelected) {
-                                tableRowsHtml += `<tr><td style="font-weight: bold; color: var(--primary-color);">📍 ${escapeHtml(spot.name)}</td><td>${escapeHtml(spot.reason)}</td><td><span class="spot-tag" style="background:#e8f4fd; color:var(--primary-color);">${escapeHtml(spot.suggestedTime || '2小時')}</span></td><td style="font-weight: 500; color: #2ed573;">${escapeHtml(spot.cost || '免費')}</td></tr>`;
-                            }
-                        });
-                        let tableSectionHtml = '';
-                        if (tableRowsHtml !== '') {
-                            tableSectionHtml = `<div class="itinerary-table-section"><div class="table-title">📋 我的精選行程表 (${selectedList.length} 個已選景點)</div><div class="table-responsive"><table class="itinerary-table"><thead><tr><th style="width: 25%">景點名稱</th><th style="width: 45%">精選原因 / 攻略小抄</th><th style="width: 15%">建議停留</th><th style="width: 15%">預估花費</th></tr></thead><tbody>${tableRowsHtml}</tbody></table></div></div>`;
-                        } else {
-                            tableSectionHtml = `<div class="itinerary-table-section" style="border-style: dashed; background-color: #fafbfc; text-align: center; padding: 25px;"><div style="font-size: 1.5rem; margin-bottom: 5px;">💡</div><div style="color: #747d8c; font-size: 0.9rem; font-weight: bold;">請點擊上方候選景點，即可在此即時排版您的專屬行程表！</div></div>`;
-                        }
-                        aiGuideHtml = `<div class="ai-guide-container"><div class="ai-guide-title"><span>🤖 AI 推薦候選景點 (點擊加入行程)：</span></div><div class="spots-selector-grid">${selectorCardsHtml}</div>${tableSectionHtml}</div>`;
-                    } else {
-                        aiGuideHtml = `<div class="ai-guide-container"><div class="ai-guide-title"><span>🤖 攻略資料：</span></div><div class="ai-content">資料剖析異常，請按重新生成按鈕。</div></div>`;
-                    }
-                }
+                card.innerHTML = `
+                    <div class="card-meta">
+                        <div class="tag-group">
+                            <span class="tag tag-priority-${record.priority}">${priorityText}</span>
+                            ${statusBadgeHtml}
+                        </div>
+                        <span class="card-time">${formatDate(record.createdAt)}</span>
+                    </div>
 
-               
+                    <div class="card-body">${safeWaiting}</div>
+                    
+                    ${record.remarks ? `<div class="card-remarks">${safeRemarks}</div>` : ''}
+
+                    <div class="card-info">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>預估時數：${record.estimatedHours} 小時</span>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn-action btn-toggle" onclick="toggleStatus('${record.id}', '${record.status}')">
+                            ${toggleBtnText}
+                        </button>
+                        <button class="btn-action btn-delete" onclick="handleDelete('${record.id}')" title="刪除本筆事項">
+                            <i class="fa-solid fa-trash-can"></i> 刪除
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /**
+         * 5. updateRecord(id, changes)
+         * 職責：更新指定 id 的單筆 record，並重新寫入 localStorage。
+         * @param {String} id 唯一識別碼
+         * @param {Object} changes 包含要修改鍵值的變更對象
+         */
+        function updateRecord(id, changes) {
+            const records = loadData();
+            const index = records.findIndex(rec => rec.id === id);
+
+            if (index !== -1) {
+                // 合併修改內容
+                records[index] = {
+                    ...records[index],
+                    ...changes
+                };
+                localStorage.setItem('records', JSON.stringify(records));
+                
+                // 更新後，套用當前篩選並重新渲染
+                applyFilter();
+            }
+        }
+
+
+        // ==========================================
+        //  非核心輔助函數與防護處理
+        // ==========================================
+
+        // 重置篩選到「全部 (all)」
+        function resetFilterToAll() {
+            currentFilter = 'all';
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === 'all');
+            });
+            applyFilter();
+        }
+
+        // 控制篩選與渲染
+        function applyFilter() {
+            const records = loadData();
+            if (currentFilter === 'all') {
+                renderList(records);
+            } else {
+                const filtered = records.filter(rec => rec.status === currentFilter);
+                renderList(filtered);
+            }
+        }
+
+        // 單獨切換狀態
+        function toggleStatus(id, currentStatus) {
+            const nextStatus = currentStatus === 'active' ? 'done' : 'active';
+            updateRecord(id, { status: nextStatus });
+            showToast(nextStatus === 'done' ? '🎓 恭喜修得本門知識！' : '✍️ 事項已退回學習中！');
+        }
+
+        // 單獨刪除
+        function handleDelete(id) {
+            const records = loadData();
+            const afterDeletion = records.filter(rec => rec.id !== id);
+            localStorage.setItem('records', JSON.stringify(afterDeletion));
+            showToast('🗑️ 已成功刪除該學習事項。');
+            applyFilter();
+        }
+
+        // 時間格式化工具
+        function formatDate(isoString) {
+            if (!isoString) return '未知時間';
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) return '未知時間';
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                const hh = String(date.getHours()).padStart(2, '0');
+                const mm = String(date.getMinutes()).padStart(2, '0');
+                return `${y}/${m}/${d} ${hh}:${mm}`;
+            } catch (err) {
+                return '未知時間';
+            }
+        }
+
+        // 安全跳脫 HTML 字元 (防範 XSS)
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Toast 親民浮動訊息
+        let toastTimer;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.display = 'block';
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
