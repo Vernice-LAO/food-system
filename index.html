@@ -12,19 +12,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* 日系無印極簡美學變數 */
+        /* 日系無印極簡美學變數 - 經現代化精緻微調 */
         :root {
-            --bg-color: #f7f5f0;       /* 柔和暖白米色 */
-            --card-bg: #ffffff;        /* 純白卡片 */
-            --text-main: #3e3a36;      /* 深木炭灰 */
-            --text-muted: #8c827a;     /* 溫和卡其灰 */
-            --border-color: #e6e1da;   /* 淺泥灰邊框 */
-            --primary: #4a5e6a;        /* 霧藍綠 */
-            --primary-light: #f0f3f5;
-            --accent-active: #df826c;  /* 暖珊瑚橘 (Active 狀態) */
-            --accent-done: #8ba888;    /* 抹茶綠 (Done 狀態) */
-            --shadow: 0 4px 12px rgba(62, 58, 54, 0.04);
-            --shadow-hover: 0 10px 20px rgba(62, 58, 54, 0.08);
+            --bg-color: #f6f3eb;       /* 優雅溫潤的米紙暖白 */
+            --card-bg: #ffffff;        /* 純白霧面卡片 */
+            --text-main: #2d2a26;      /* 深木炭茶褐 */
+            --text-muted: #857c74;     /* 柔和霧面卡其 */
+            --border-color: #e5dfd3;   /* 微風暖沙細邊框 */
+            --primary: #455560;        /* 沉穩石青藍 */
+            --primary-light: #f2f5f7;
+            --primary-hover: #34424c;
+            --accent-active: #e27d60;  /* 熟成柿子橘 (Active) */
+            --accent-done: #739572;    /* 靜謐抹茶綠 (Done) */
+            
+            /* 經物理渲染計算的擬真投影陰影 */
+            --shadow-sm: 0 2px 8px rgba(45, 42, 38, 0.04);
+            --shadow: 0 8px 24px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 16px 36px rgba(45, 42, 38, 0.12);
+            --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -32,17 +37,20 @@
             margin: 0;
             padding: 0;
             font-family: 'Noto Sans TC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            background-color: var(--bg-color);
+            background: linear-gradient(180deg, #fbfaf8 0%, var(--bg-color) 100%);
             color: var(--text-main);
-            line-height: 1.6;
-            padding: 2.5rem 1rem;
+            line-height: 1.7;
+            padding: 3rem 1.5rem;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1040px;
             margin: 0 auto;
         }
 
@@ -50,24 +58,31 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--primary);
             letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
+            gap: 0.75rem;
+        }
+
+        header h1 i {
+            font-size: 2.2rem;
+            color: var(--accent-active);
         }
 
         header p {
             color: var(--text-muted);
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
         /* 左右雙欄結構 */
@@ -75,71 +90,85 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 2.5rem;
+            animation: fadeInSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         @media (min-width: 850px) {
             .layout-grid {
-                grid-template-columns: 360px 1fr;
+                grid-template-columns: 380px 1fr;
+                gap: 3rem;
             }
         }
 
-        /* 卡片統一樣式 */
+        /* 卡片統一樣式 - 提升視覺空氣感 */
         .card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             height: fit-content;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
         }
 
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1.5px solid var(--border-color);
-            padding-bottom: 0.75rem;
+            gap: 0.6rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            letter-spacing: 0.5px;
         }
 
         /* 表單元素樣式 */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.2px;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.1rem;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fafaf9;
+            border-radius: 10px;
+            background-color: #fdfdfc;
             font-size: 0.95rem;
             color: var(--text-main);
-            transition: all 0.25s ease;
+            transition: var(--transition-smooth);
+        }
+
+        .form-control::placeholder {
+            color: #b0a8a0;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
             background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(74, 94, 106, 0.12);
+            box-shadow: 0 0 0 4px rgba(69, 85, 96, 0.08);
+            transform: translateY(-1px);
         }
 
         .input-row {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         /* 提交按鈕 */
@@ -147,23 +176,28 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             width: 100%;
-            padding: 0.85rem;
+            padding: 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             color: #ffffff;
             background-color: var(--primary);
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(74, 94, 106, 0.15);
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(69, 85, 96, 0.15);
         }
 
         .btn-submit:hover {
-            background-color: #3b4b55;
-            transform: translateY(-1px);
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(69, 85, 96, 0.25);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
         }
 
         /* 右側展示篩選與卡片牆工具列 */
@@ -183,46 +217,224 @@
         }
 
         .toolbar-title {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.45rem;
+            font-weight: 800;
             color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            letter-spacing: -0.2px;
         }
 
         /* 極簡篩選標籤 */
         .filter-tabs {
             display: flex;
-            background-color: #e9e4dc;
-            padding: 0.3rem;
+            background-color: #eae3d7;
+            padding: 0.35rem;
             border-radius: 30px;
             gap: 0.25rem;
+            align-self: flex-start;
         }
 
         .filter-tab {
             border: none;
             background: none;
-            padding: 0.4rem 1.2rem;
+            padding: 0.5rem 1.4rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
             cursor: pointer;
             color: var(--text-muted);
-            transition: all 0.25s ease;
+            transition: var(--transition-smooth);
+        }
+
+        .filter-tab:hover {
+            color: var(--text-main);
         }
 
         .filter-tab.active {
             background-color: var(--card-bg);
             color: var(--text-main);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(45, 42, 38, 0.08);
         }
+
+        /* 統計摘要面板樣式 - 優雅現代風 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: rgba(69, 85, 96, 0.2);
+        }
+
+        .stats-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            letter-spacing: 0.3px;
+        }
+
+        .stats-value {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+
+        /* 新增：進階數據視覺化儀表板樣式 */
+        .visual-dashboard {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        @media (min-width: 580px) {
+            .visual-dashboard {
+                grid-template-columns: 120px 1fr;
+                align-items: center;
+            }
+        }
+
+        .visual-dashboard:hover {
+            box-shadow: var(--shadow);
+            border-color: rgba(69, 85, 96, 0.15);
+        }
+
+        /* 圓環進度條結構 */
+        .chart-ring-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chart-ring-svg {
+            transform: rotate(-90deg);
+        }
+
+        .chart-ring-bg {
+            fill: none;
+            stroke: #f3eee3;
+            stroke-width: 8;
+        }
+
+        .chart-ring-progress {
+            fill: none;
+            stroke: var(--accent-done);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chart-ring-text {
+            position: absolute;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-ring-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: -2px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* 優先級能量條圖表 */
+        .bar-chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .bar-chart-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.2px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .bar-track {
+            height: 10px;
+            background-color: #f3eee3;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .bar-fill-high { background-color: var(--accent-active); }
+        .bar-fill-medium { background-color: #f5b041; }
+        .bar-fill-low { background-color: var(--primary); }
 
         /* 學習事項卡片展示牆 */
         .records-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.25rem;
+            gap: 1.5rem;
         }
 
         @media (min-width: 650px) {
@@ -231,33 +443,37 @@
             }
         }
 
+        /* 備忘卡片本體 */
         .study-card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 16px;
+            padding: 1.75rem;
             border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: var(--transition-smooth);
             position: relative;
             overflow: hidden;
+            animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         .study-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow);
+            border-color: rgba(69, 85, 96, 0.15);
         }
 
-        /* 事項狀態邊框視覺提示 */
+        /* 事項狀態左邊線視覺提示 */
         .study-card::before {
             content: '';
             position: absolute;
             left: 0;
             top: 0;
             bottom: 0;
-            width: 5px;
+            width: 6px;
             background-color: var(--accent-active);
+            transition: var(--transition-smooth);
         }
 
         .study-card.is-done::before {
@@ -269,79 +485,85 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
         .tag-group {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .tag {
             font-size: 0.75rem;
             font-weight: 700;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            letter-spacing: 0.2px;
+            transition: var(--transition-smooth);
         }
 
-        .tag-priority-high { background-color: #fee2e2; color: #b91c1c; }
-        .tag-priority-medium { background-color: #fef3c7; color: #d97706; }
-        .tag-priority-low { background-color: #f0fdf4; color: #15803d; }
+        .tag-priority-high { background-color: #ffebeb; color: #b91c1c; }
+        .tag-priority-medium { background-color: #fff9db; color: #b26a00; }
+        .tag-priority-low { background-color: #ebfbee; color: #1e7e34; }
 
         .tag-status-active {
-            background-color: #fff4f2;
+            background-color: #fff0ed;
             color: var(--accent-active);
-            border: 1px solid #ffd4cc;
+            border: 1px solid rgba(226, 125, 96, 0.2);
         }
 
         .tag-status-done {
-            background-color: #f1f8f0;
+            background-color: #f1f7f1;
             color: var(--accent-done);
-            border: 1px dashed #cde2cc;
+            border: 1px dashed rgba(115, 149, 114, 0.3);
         }
 
         .card-time {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
-        /* 核心內文 */
+        /* 核心內文 - 提高對比度與易讀性 */
         .card-body {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        /* 註記 - 細緻簡約的筆記背景 */
+        .card-remarks {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            background-color: #fcfbf9;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border-left: 3px solid #ded9cb;
+            margin-bottom: 1.25rem;
+            font-style: italic;
             word-break: break-all;
             line-height: 1.5;
         }
 
-        /* 註記 */
-        .card-remarks {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            background-color: #fafafa;
-            border-radius: 6px;
-            padding: 0.6rem;
-            border-left: 3px solid var(--border-color);
-            margin-bottom: 1.25rem;
-            font-style: italic;
-            word-break: break-all;
-        }
-
         /* 學習時數資訊 */
         .card-info {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             margin-top: auto;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
-            font-weight: 500;
+            gap: 0.4rem;
+            font-weight: 700;
         }
 
         .card-info i {
             color: var(--primary);
+            font-size: 1rem;
         }
 
         /* 底部控制按鈕 */
@@ -350,42 +572,46 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-color);
-            padding-top: 0.85rem;
+            padding-top: 1rem;
         }
 
         .btn-action {
             background: none;
             border: 1px solid var(--border-color);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
             font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            transition: all 0.2s ease;
+            gap: 0.4rem;
+            transition: var(--transition-smooth);
         }
 
         .btn-toggle {
             color: var(--primary);
-            background-color: #fafafa;
+            background-color: #fdfdfc;
         }
 
         .btn-toggle:hover {
             background-color: var(--primary);
             color: #ffffff;
             border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(69, 85, 96, 0.15);
         }
 
         .btn-delete {
             color: #c62828;
-            border: none;
+            border: 1px solid rgba(198, 40, 40, 0.1);
+            background-color: rgba(198, 40, 40, 0.02);
         }
 
         .btn-delete:hover {
             background-color: #ffebee;
             color: #b71c1c;
+            border-color: #ffcdd2;
+            box-shadow: 0 4px 10px rgba(198, 40, 40, 0.1);
         }
 
         /* 完成狀態 (done) 卡片樣式 */
@@ -395,45 +621,74 @@
         }
 
         .study-card.is-done {
-            background-color: #fbfbf9;
+            background-color: #f9f9f7;
             opacity: 0.85;
+            border-color: #e2dfd7;
         }
 
         /* 滿版空清單 */
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 4.5rem 2rem;
+            padding: 5rem 2rem;
             color: var(--text-muted);
             background-color: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 16px;
             border: 2px dashed var(--border-color);
+            box-shadow: var(--shadow-sm);
         }
 
         .empty-state-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            opacity: 0.6;
+            font-size: 4rem;
+            margin-bottom: 1.25rem;
+            opacity: 0.7;
             color: var(--primary);
+            display: block;
+            animation: pulse 2s infinite ease-in-out;
         }
 
-        /* 彈出訊息提示 */
+        /* 彈出訊息提示 - Toast 精美動畫與排版 */
         .toast {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background-color: var(--text-main);
+            bottom: 2.5rem;
+            right: 2.5rem;
+            background-color: var(--primary);
             color: #ffffff;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 0.9rem 1.75rem;
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(45, 42, 38, 0.2);
             z-index: 1000;
             display: none;
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 700;
+            font-size: 0.92rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* KEYFRAMES 動畫 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         @keyframes slideIn {
-            from { transform: translateY(1.5rem); opacity: 0; }
+            from { transform: translateY(2rem); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
     </style>
@@ -443,7 +698,7 @@
     <div class="container">
         <!-- 標頭 -->
         <header>
-            <h1>📚 study_list</h1>
+            <h1><i class="fa-solid fa-graduation-cap"></i> study_list</h1>
             <p>簡單、專注的學習探討與備考事項備忘小幫手</p>
         </header>
 
@@ -453,7 +708,7 @@
             <!-- 左欄：研習事項新增表單 -->
             <section class="card">
                 <div class="card-title">
-                    <i class="fa-solid fa-feather-pointed"></i> 記下研習任務
+                    <i class="fa-solid fa-feather-pointed" style="color: var(--accent-active);"></i> 記下研習任務
                 </div>
                 <form id="studyForm" novalidate>
                     
@@ -500,13 +755,23 @@
                 <!-- 篩選控制列 -->
                 <div class="toolbar">
                     <div class="toolbar-title">
-                        <i class="fa-solid fa-book-open"></i> 研習清單
+                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> 研習清單
                     </div>
                     <div class="filter-tabs" id="filterTabs">
                         <button class="filter-tab active" data-filter="all">全部</button>
                         <button class="filter-tab" data-filter="active">研習中</button>
                         <button class="filter-tab" data-filter="done">已修得</button>
                     </div>
+                </div>
+
+                <!-- 統計摘要面板 -->
+                <div id="statsSummary" class="stats-container">
+                    <!-- 由 updateSummary() 動態載入 -->
+                </div>
+
+                <!-- 新增：進階數據視覺化儀表板 -->
+                <div id="visualDashboard" class="visual-dashboard">
+                    <!-- 由 updateSummary() 動態載入 -->
                 </div>
 
                 <!-- 備忘卡片牆 -->
@@ -737,6 +1002,9 @@
          * @param {Array} recordsToShow 要渲染到畫面的紀錄陣列
          */
         function renderList(recordsToShow) {
+            // 即時更新上方統計面板數據與進階視覺化圖表 (根據所有 localStorage 裡的資料統計)
+            updateSummary();
+
             const container = document.getElementById('recordsContainer');
             container.innerHTML = ''; // 清空先前的內容
 
@@ -744,7 +1012,7 @@
             if (!recordsToShow || recordsToShow.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon"><i class="fa-solid fa-mug-hot"></i></div>
+                        <span class="empty-state-icon"><i class="fa-solid fa-mug-hot"></i></span>
                         <h3>當前無研習任務</h3>
                         <p>現在正是放鬆或寫下新一項學習計畫的好時機！</p>
                     </div>
@@ -840,6 +1108,125 @@
         // ==========================================
         //  非核心輔助函數與防護處理
         // ==========================================
+
+        /**
+         * 統計與資料視覺化面版更新函數 (Surgically Expanded to Support Visual Dashboard)
+         * 職責：統計 localStorage 中所有學習卡片的數據，動態繪製「環狀進度圖(SVG)」與「優先級時數比例圖(HTML5/CSS3)」
+         */
+        function updateSummary() {
+            const allRecords = loadData();
+            const totalCount = allRecords.length;
+            const activeRecords = allRecords.filter(r => r.status === 'active');
+            const doneRecords = allRecords.filter(r => r.status === 'done');
+
+            const activeCount = activeRecords.length;
+            const doneCount = doneRecords.length;
+            const activeHoursSum = activeRecords.reduce((sum, r) => sum + (Number(r.estimatedHours) || 0), 0);
+
+            // 1. 更新原本的數字統計面板
+            const summaryContainer = document.getElementById('statsSummary');
+            if (summaryContainer) {
+                summaryContainer.innerHTML = `
+                    <div class="stats-card">
+                        <div class="stats-label">
+                            <i class="fa-solid fa-hourglass-half" style="color: var(--accent-active);"></i> 研習中
+                        </div>
+                        <div class="stats-value">${activeCount} 個</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-label">
+                            <i class="fa-regular fa-clock" style="color: var(--primary);"></i> 待研總時數
+                        </div>
+                        <div class="stats-value">${activeHoursSum} hr</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-label">
+                            <i class="fa-solid fa-graduation-cap" style="color: var(--accent-done);"></i> 已修得
+                        </div>
+                        <div class="stats-value">${doneCount} 個</div>
+                    </div>
+                `;
+            }
+
+            // 2. 進行視覺化數據分析與繪圖運算
+            const donePercent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+            
+            // 計算各優先級別的累計待研時數
+            const highHours = activeRecords.filter(r => r.priority === 'high').reduce((sum, r) => sum + (Number(r.estimatedHours) || 0), 0);
+            const medHours = activeRecords.filter(r => r.priority === 'medium').reduce((sum, r) => sum + (Number(r.estimatedHours) || 0), 0);
+            const lowHours = activeRecords.filter(r => r.priority === 'low').reduce((sum, r) => sum + (Number(r.estimatedHours) || 0), 0);
+
+            // 找出最高時數以便規劃相對百分比寬度
+            const maxHours = Math.max(highHours, medHours, lowHours, 1);
+            const highPercent = Math.round((highHours / maxHours) * 100);
+            const medPercent = Math.round((medHours / maxHours) * 100);
+            const lowPercent = Math.round((lowHours / maxHours) * 100);
+
+            // 計算 SVG 圓環虛線偏移量 (半徑r=36, 周長2*PI*r ≈ 226)
+            const circumference = 2 * Math.PI * 36;
+            const strokeDashoffset = circumference - (donePercent / 100) * circumference;
+
+            // 3. 更新視覺化圖表面板
+            const visualDashboard = document.getElementById('visualDashboard');
+            if (visualDashboard) {
+                if (totalCount === 0) {
+                    visualDashboard.style.display = 'none'; // 無資料時先隱藏圖表
+                } else {
+                    visualDashboard.style.display = 'grid';
+                    visualDashboard.innerHTML = `
+                        <!-- 左側：環狀進度圖 -->
+                        <div class="chart-ring-wrapper">
+                            <svg class="chart-ring-svg" width="90" height="90">
+                                <circle class="chart-ring-bg" cx="45" cy="45" r="36" />
+                                <circle class="chart-ring-progress" cx="45" cy="45" r="36" 
+                                    style="stroke-dasharray: ${circumference}; stroke-dashoffset: ${strokeDashoffset};" />
+                            </svg>
+                            <div class="chart-ring-text">
+                                ${donePercent}%
+                                <span class="chart-ring-label">完成度</span>
+                            </div>
+                        </div>
+
+                        <!-- 右側：優先級時數分佈條形圖 -->
+                        <div class="bar-chart-container">
+                            <div class="bar-chart-title">
+                                <i class="fa-solid fa-chart-simple"></i> 優先級待研時數分佈
+                            </div>
+                            <!-- 高優先級 -->
+                            <div class="bar-item">
+                                <div class="bar-header">
+                                    <span>🔥 高優先級</span>
+                                    <span>${highHours} 小時</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill bar-fill-high" style="width: ${highPercent}%;"></div>
+                                </div>
+                            </div>
+                            <!-- 中優先級 -->
+                            <div class="bar-item">
+                                <div class="bar-header">
+                                    <span>⚡ 中優先級</span>
+                                    <span>${medHours} 小時</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill bar-fill-medium" style="width: ${medPercent}%;"></div>
+                                </div>
+                            </div>
+                            <!-- 低優先級 -->
+                            <div class="bar-item">
+                                <div class="bar-header">
+                                    <span>🌱 低優先級</span>
+                                    <span>${lowHours} 小時</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill bar-fill-low" style="width: ${lowPercent}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
 
         // 重置篩選到「全部 (all)」
         function resetFilterToAll() {
